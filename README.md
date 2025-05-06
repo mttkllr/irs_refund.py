@@ -1,6 +1,6 @@
 # IRS Refund Checker (Python)
 
-This script is a Python recreation of the [irs_refund_checker by DutchRican](https://github.com/DutchRican/irs_refund_checker), originally written in TypeScript using Bun and Puppeteer.
+This script is a Python reimagining with additional features of the [irs_refund_checker by DutchRican](https://github.com/DutchRican/irs_refund_checker), originally written in TypeScript using Bun and Puppeteer.
 
 This script checks the status of your U.S. federal tax refund using the IRS "Where's My Refund?" tool.
 
@@ -121,4 +121,5 @@ The script will then launch a browser, navigate to the IRS website, fill in your
     If you encounter this, you will need to wait until the next day to check again.
 *   **Data Storage**: If you choose to save your information to the `.env` file, be aware that your SSN, tax year, filing status, and refund amount will be stored in plain text. Ensure that `.env` is included in your `.gitignore` file to prevent accidental commits of sensitive data.
 *   **Browser Drivers**: The script uses `webdriver-manager` to automatically download and manage browser drivers. If you encounter issues, ensure you have the chosen browser (Firefox, Chrome, or Edge) installed and that `webdriver-manager` can access the internet to download the appropriate driver.
-*   **IRS Website Changes**: The IRS website structure or element IDs may change, which could break this script. If you encounter issues, please check the [IRS "Where's My Refund?" page](https://www.irs.gov/refunds) directly and consider opening an issue or pull request if you can identify the necessary changes. 
+*   **IRS Website Changes**: The IRS website structure or element IDs may change, which could break this script. If you encounter issues, please check the [IRS "Where's My Refund?" page](https://www.irs.gov/refunds) directly and consider opening an issue or pull request if you can identify the necessary changes.
+*   **Headless Browser**: By default, the script launches the specified browser in headless mode, meaning you will not see the browser window. This is done for efficiency and to allow the script to run in environments without a graphical interface. If you need to see the browser for debugging, you may need to modify the script's browser configuration. 
