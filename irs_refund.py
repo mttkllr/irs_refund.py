@@ -2,6 +2,7 @@ import os
 import argparse
 import getpass
 import logging # Added for potential future use, though print will be conditional for now
+import re # Import re for SSN validation
 from dotenv import load_dotenv, set_key
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -36,6 +37,9 @@ def save_to_env(data_to_save):
         set_key(env_path, "REFUND_AMOUNT", data_to_save["amount"])
         print(f"Successfully saved data to {env_path}")
         return True
+    except IOError as e: # More specific error for file operations
+        print(f"Error writing to .env file (IOError): {e}")
+        return False
     except Exception as e:
         print(f"Error saving data to .env file: {e}")
         return False
@@ -51,8 +55,24 @@ def get_user_data(args):
     if not all([ssn_raw, tax_year, filing_status_name, refund_amount]):
         print("Could not find all required information in .env file or command line arguments. Please enter manually:")
         data_entered_manually = True
-        # Use getpass for SSN input
-        ssn_raw_input = getpass.getpass(prompt="Enter your Social Security Number (SSN) (XXX-XX-XXXX or XXXXXXXXX): ")
+        
+        # SSN Input with validation
+        while True:
+            ssn_raw_input = getpass.getpass(prompt="Enter your Social Security Number (SSN) (e.g., XXX-XX-XXXX or XXXXXXXXX): ")
+            # Validate SSN format: 9 digits, or XXX-XX-XXXX
+            cleaned_ssn = ssn_raw_input.replace("-", "")
+            if len(cleaned_ssn) == 9 and cleaned_ssn.isdigit():
+                if "-" in ssn_raw_input: # If hyphens are present, check their positions
+                    if re.match(r"^\\d{3}-\\d{2}-\\d{4}$", ssn_raw_input):
+                        break
+                    else:
+                        print("Invalid SSN format. If using hyphens, please use XXX-XX-XXXX format.")
+                else: # No hyphens, just 9 digits
+                    break
+            else:
+                print("Invalid SSN. Please enter 9 digits, optionally with hyphens (XXX-XX-XXXX).")
+        
+        # TODO: Update this list annually or as the IRS tool changes.
         while True:
             tax_year_input = input("Enter the tax year (e.g., 2024, 2023, 2022, 2021): ")
             if tax_year_input in ["2024", "2023", "2022", "2021"]:
@@ -83,7 +103,7 @@ def get_user_data(args):
             print("Invalid amount. Please enter numbers only.")
         
         # Update the variables if data was entered manually
-        ssn = ssn_raw_input
+        ssn = ssn_raw_input # This 'ssn' variable now holds the validated, potentially hyphenated, raw input.
         tax_year = tax_year_input
         filing_status_name = filing_status_name_input
         refund_amount = refund_amount_input
@@ -97,7 +117,7 @@ def get_user_data(args):
             confirm_save = input("Do you want to save this information to the .env file? (yes/no): ").strip().lower()
             if confirm_save == 'yes':
                 data_to_save = {
-                    "ssn_raw": ssn, # Save the raw input ssn
+                    "ssn_raw": ssn, # Save the raw input ssn (which has been validated)
                     "tax_year": tax_year,
                     "filing_status_name": filing_status_name, # Save the user-friendly name
                     "amount": refund_amount
@@ -106,9 +126,10 @@ def get_user_data(args):
             else:
                 print("Data not saved to .env file.")
     else: # Data was found in .env
-        ssn = ssn_raw # Use the value from .env
+        ssn = ssn_raw # Use the value from .env; assumes .env ssn is in acceptable format or user responsibility
 
     # Ensure ssn is processed for use with IRS site (remove hyphens)
+    # This 'processed_ssn' is what's sent to the IRS website.
     processed_ssn = ssn.replace("-", "") if ssn else ""
 
     # Map user-friendly filing status name to IRS website specific ID
