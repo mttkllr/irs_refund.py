@@ -16,6 +16,8 @@ VENV/
 .idea/
 *.sublime-project
 *.sublime-workspace
+.cursor/
+.cursorignore
 
 # Selenium / WebDriver related
 geckodriver.log
