@@ -419,11 +419,11 @@ def main():
         help="Save the entered information to a .env file if not already present or if entered manually."
     )
     
-    # Allow overriding .env values with command-line arguments (optional enhancement, not fully implemented here yet)
-    # parser.add_argument("--ssn", help="Social Security Number")
-    # parser.add_argument("--tax-year", help="Tax Year")
-    # parser.add_argument("--filing-status", help="Filing Status (SINGLE, MFJ, etc.)")
-    # parser.add_argument("--amount", help="Refund Amount")
+    # Allow overriding .env values with command-line arguments
+    parser.add_argument("--ssn", help="Social Security Number (XXX-XX-XXXX or XXXXXXXXX)")
+    parser.add_argument("--tax-year", help="Tax Year (e.g., 2024, 2023, 2022, 2021)")
+    parser.add_argument("--filing-status", help="Filing Status (SINGLE, MFJ, MFS, HOH, QW)")
+    parser.add_argument("--amount", help="Refund Amount (e.g., 1234)")
 
     args = parser.parse_args()
 
