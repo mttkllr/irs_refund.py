@@ -90,13 +90,21 @@ def get_user_data(args):
         
         # If save_env is flagged and data was entered manually, save it
         if args.save_env and data_entered_manually:
-            data_to_save = {
-                "ssn_raw": ssn, # Save the raw input ssn
-                "tax_year": tax_year,
-                "filing_status_name": filing_status_name, # Save the user-friendly name
-                "amount": refund_amount
-            }
-            save_to_env(data_to_save)
+            print("\nWarning: Saving this information to the .env file will store your sensitive data")
+            print("(SSN, Tax Year, Filing Status, Refund Amount) in plain text.")
+            print("Ensure '.env' is listed in your .gitignore file to prevent accidental commits.\n")
+            
+            confirm_save = input("Do you want to save this information to the .env file? (yes/no): ").strip().lower()
+            if confirm_save == 'yes':
+                data_to_save = {
+                    "ssn_raw": ssn, # Save the raw input ssn
+                    "tax_year": tax_year,
+                    "filing_status_name": filing_status_name, # Save the user-friendly name
+                    "amount": refund_amount
+                }
+                save_to_env(data_to_save)
+            else:
+                print("Data not saved to .env file.")
     else: # Data was found in .env
         ssn = ssn_raw # Use the value from .env
 
